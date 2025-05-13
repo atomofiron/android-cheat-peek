@@ -32,10 +32,13 @@ import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
 import androidx.annotation.NonNull;
 
-public class MainActivity extends Activity implements
-        CompoundButton.OnCheckedChangeListener,
-        SeekBar.OnSeekBarChangeListener,
-        View.OnClickListener {
+public class MainActivity
+    extends
+        Activity
+    implements
+        CompoundButton.OnCheckedChangeListener
+      , SeekBar.OnSeekBarChangeListener
+{
 
     private static final float ALPHA_ENABLED = 1f;
     private static final float ALPHA_DISABLED = .5f;
@@ -77,7 +80,7 @@ public class MainActivity extends Activity implements
     private ImageView imageView;
     private View blockView;
 
-    private static Pattern imagePattern = Pattern.compile(".+\\.(png|jpe?g)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern imagePattern = Pattern.compile(".+\\.(png|jpe?g)$", Pattern.CASE_INSENSITIVE);
     private SharedPreferences sp;
     private Vibrator vibrator;
 
@@ -86,10 +89,10 @@ public class MainActivity extends Activity implements
     private int submitCode = 79;
     private int prevCode = 88;
     private int nextCode = 87;
-    private long[] patternZero = {0, 50};
-    private long[] patternOne = {0, 50, 100, 50};
-    private long[] patternSuccess = {0, 200};
-    private long[] patternError = {0, 200, 100, 200};
+    private final long[] patternZero = {0, 50};
+    private final long[] patternOne = {0, 50, 100, 50};
+    private final long[] patternSuccess = {0, 200};
+    private final long[] patternError = {0, 200, 100, 200};
 
     private int[] array = null;
     private boolean seekAllowed = false;
@@ -138,6 +141,7 @@ public class MainActivity extends Activity implements
         tvCurrent.setText(getString(R.string.current, ""));
         tvCurrentPath.setText(getString(R.string.current_path, ""));
 
+        //noinspection deprecation
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         etPath.setText(sp.getString(KEY_PATH, etPath.getText().toString()));
         zeroCode = sp.getInt(KEY_ZERO_CODE, zeroCode);
@@ -154,8 +158,8 @@ public class MainActivity extends Activity implements
         btnSubmitEdit.setOnCheckedChangeListener(this);
         btnPrevEdit.setOnCheckedChangeListener(this);
         btnNextEdit.setOnCheckedChangeListener(this);
-        btnLock.setOnClickListener(this);
-        btnPermission.setOnClickListener(this);
+        btnLock.setOnClickListener(v -> lockControls(true));
+        btnPermission.setOnClickListener(v -> requestPermission());
         sbUnlock.setOnSeekBarChangeListener(this);
 
         printCodes();
@@ -191,7 +195,6 @@ public class MainActivity extends Activity implements
     @Override
     protected void onStop() {
         super.onStop();
-
         sp.edit().putString(KEY_PATH, etPath.getText().toString()).apply();
     }
 
@@ -224,18 +227,6 @@ public class MainActivity extends Activity implements
         }
         if (btnNextEdit.isChecked() && btnNextEdit.getId() != id) {
             btnNextEdit.setChecked(false);
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_lock:
-                lockControls(true);
-                break;
-            case R.id.btn_permission:
-                requestPermission();
-                break;
         }
     }
 
@@ -542,8 +533,8 @@ public class MainActivity extends Activity implements
     private void requestPermission() {
         if (SDK_INT > VERSION_CODES.R) {
             Intent intent = new Intent(
-                Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+                    Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                    Uri.parse("package:" + BuildConfig.APPLICATION_ID)
             );
             startActivity(intent);
         } else if (SDK_INT > VERSION_CODES.M) {
@@ -558,6 +549,7 @@ public class MainActivity extends Activity implements
     private static String[] getFiles(String dirPath) {
         File dir = new File(dirPath);
         String[] list = (dir.list() == null) ? new String[]{} : dir.list();
+        assert list != null;
         Arrays.sort(list, Sorter.INSTANCE);
         return list;
     }
@@ -570,73 +562,4 @@ public class MainActivity extends Activity implements
             return first.compareTo(second);
         }
     }
-
-    //private static void log(String s) { android.util.Log.e("ekzam", s); }
-
-//    @SuppressWarnings({"NonAsciiCharacters", "RedundantIfStatement"})
-//    private void kek() {
-//        boolean программа_выполняет_некую_НЕсложную_функцию = Math.random() > 0.5;
-//        boolean бесплатно_и_без_рекламы = Math.random() > 0.5;
-//        boolean в_приложении_реклама = Math.random() > 0.5;
-//        boolean прложение_платное_или_покупка = Math.random() > 0.5;
-//        boolean малый_доход_разработчику = false;
-//        boolean рекламы_много = Math.random() > 0.5;
-//        boolean есть_пробный_период = Math.random() > 0.5;
-//        boolean тебе_хватит_пробного_периода = Math.random() > 0.5;
-//        boolean приложением_нужно_пользоваться_часто = Math.random() > 0.5;
-//        boolean справедливо_заплатить_за_функционал = false;
-//        boolean она_должна_похорошему_быть_бесплатной_и_без_рекламы = false;
-//        boolean плохо_и_для_разработчика = false;
-//        boolean и_для_пользователя = false;
-//
-//            boolean хорошо;
-//        try {
-//
-//            if (программа_выполняет_некую_НЕсложную_функцию) {
-//                if (бесплатно_и_без_рекламы) {
-//                    хорошо = true;
-//                } else {
-//                    хорошо = false;
-//                }
-//            } else /* функция сложная */ {
-//                if (в_приложении_реклама) {
-//                    if (рекламы_много) {
-//                        хорошо = false;
-//                    } else /* рекламы мало */ {
-//                        малый_доход_разработчику = true; // плохо
-//                        хорошо = false;
-//                    }
-//                } else if (прложение_платное_или_покупка) {
-//                    if (приложением_нужно_пользоваться_часто) {
-//                        справедливо_заплатить_за_функционал = true; // покупка
-//                        хорошо = true;
-//                    } else /* нужно не часто или вообще один раз */ {
-//                        if (есть_пробный_период) {
-//                            if (тебе_хватит_пробного_периода) {
-//                                хорошо = true;
-//                            } else {
-//                                throw new Exception("приложением_нужно_пользоваться_часто = true");
-//                            }
-//                        } else {
-//                            хорошо = false;
-//                            плохо_и_для_разработчика = true;
-//                            и_для_пользователя = true;
-//                            /* потому что пробный период позволяет убедиться в том,
-//                             * что приложение действительно нужно пользователю,
-//                             * и тогда он её купит с бОльшей аероятностью,
-//                             * чем без пробного периода
-//                             */
-//                        }
-//                    }
-//                } else /* бесплатно и без рекламы */ {
-//                    хорошо = true;
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            хорошо = false;
-//        }
-//
-//        boolean a = приложением_нужно_пользоваться_часто && малый_доход_разработчику && хорошо && справедливо_заплатить_за_функционал && она_должна_похорошему_быть_бесплатной_и_без_рекламы && плохо_и_для_разработчика && и_для_пользователя;
-//    }
 }
