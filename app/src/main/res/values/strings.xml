@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Ekzam</string>
+
+    <string name="last_code">Last code: %d</string>
+    <string name="current">Current: %s</string>
+    <string name="current_path">File: %s</string>
+    <string name="hint_path_to_dir">Path to dir contains images</string>
+    <string name="zero_code">Zero code: %d</string>
+    <string name="one_code">One code: %d</string>
+    <string name="submit_code">Submit code: %d</string>
+    <string name="prev_code">Prev code: %d</string>
+    <string name="next_code">Next code: %d</string>
+    <string name="edit">Edit</string>
+    <string name="press">Press…</string>
+    <string name="slide_to_unlock">Slide to unlock</string>
+    <string name="lock">Lock</string>
+    <string name="grant_permission">Grant permission to read storage</string>
+</resources>
