@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ekzam</string>
+    <string name="app_name">CheatPeek</string>
 
     <string name="last_code">Last code: %d</string>
     <string name="current">Current: %s</string>

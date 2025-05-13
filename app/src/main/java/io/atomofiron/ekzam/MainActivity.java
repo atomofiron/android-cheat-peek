@@ -1,21 +1,25 @@
 package io.atomofiron.ekzam;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
+import android.net.Uri;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.widget.*;
 
 import java.io.File;
@@ -23,7 +27,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
+import static android.os.Build.VERSION.SDK_INT;
 import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
+
+import androidx.annotation.NonNull;
+
+import app.atomofiron.cheatpeek.BuildConfig;
+import app.atomofiron.cheatpeek.R;
 
 public class MainActivity extends Activity implements
         CompoundButton.OnCheckedChangeListener,
@@ -93,6 +103,20 @@ public class MainActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        View controls = findViewById(R.id.controls);
+        controls.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @NonNull
+            @Override
+            public WindowInsets onApplyWindowInsets(@NonNull View v, @NonNull WindowInsets windowInsets) {
+                int left = windowInsets.getSystemWindowInsetLeft();
+                int top = windowInsets.getSystemWindowInsetTop();
+                int right = windowInsets.getSystemWindowInsetRight();
+                int bottom = windowInsets.getSystemWindowInsetBottom();
+                controls.setPadding(left, top, right, bottom);
+                return windowInsets;
+            }
+        });
+
         tvLastCode = findViewById(R.id.tv_code);
         tvCurrent = findViewById(R.id.tv_current);
         etPath = findViewById(R.id.et_path);
@@ -154,7 +178,7 @@ public class MainActivity extends Activity implements
     }
 
     private void vibrate(long[] pattern) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (SDK_INT >= VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createWaveform(pattern, NO_REPEAT));
         } else {
             vibrator.vibrate(pattern, NO_REPEAT);
@@ -164,12 +188,7 @@ public class MainActivity extends Activity implements
     @Override
     protected void onStart() {
         super.onStart();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int code = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-            boolean granted = code == PackageManager.PERMISSION_GRANTED;
-            btnPermission.setVisibility(granted ? View.GONE : View.VISIBLE);
-        }
+        btnPermission.setVisibility(havePermission() ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -513,9 +532,26 @@ public class MainActivity extends Activity implements
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
+    private boolean havePermission() {
+        if (SDK_INT > VERSION_CODES.R) {
+            return Environment.isExternalStorageManager() || checkSelfPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        } else if (SDK_INT > VERSION_CODES.M) {
+            return checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return true;
+        }
+    }
+
     private void requestPermission() {
-        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
+        if (SDK_INT > VERSION_CODES.R) {
+            Intent intent = new Intent(
+                Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+            );
+            startActivity(intent);
+        } else if (SDK_INT > VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
+        }
     }
 
     private static boolean isImage(String file) {
