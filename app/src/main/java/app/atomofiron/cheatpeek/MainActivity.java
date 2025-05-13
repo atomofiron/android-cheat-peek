@@ -1,4 +1,4 @@
-package io.atomofiron.ekzam;
+package app.atomofiron.cheatpeek;
 
 import android.Manifest;
 import android.app.Activity;
@@ -31,9 +31,6 @@ import static android.os.Build.VERSION.SDK_INT;
 import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
 import androidx.annotation.NonNull;
-
-import app.atomofiron.cheatpeek.BuildConfig;
-import app.atomofiron.cheatpeek.R;
 
 public class MainActivity extends Activity implements
         CompoundButton.OnCheckedChangeListener,
