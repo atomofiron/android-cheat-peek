@@ -44,7 +44,6 @@ public class MainActivity
     private static final float ALPHA_DISABLED = .5f;
 
     private static final String KEY_PATH = "KEY_PATH";
-    private static final String KEY_SHOW_TIP = "KEY_SHOW_TIP";
     private static final String KEY_ZERO_CODE = "KEY_ZERO_CODE";
     private static final String KEY_ONE_CODE = "KEY_ONE_CODE";
     private static final String KEY_SUBMIT_CODE = "KEY_SUBMIT_CODE";
@@ -73,7 +72,6 @@ public class MainActivity
     private ToggleButton btnSubmitEdit;
     private ToggleButton btnPrevEdit;
     private ToggleButton btnNextEdit;
-    private TextView tvTip;
     private SeekBar sbUnlock;
     private Button btnLock;
     private Button btnPermission;
@@ -131,7 +129,6 @@ public class MainActivity
         btnSubmitEdit = findViewById(R.id.btn_edit_submit);
         btnPrevEdit = findViewById(R.id.btn_edit_prev);
         btnNextEdit = findViewById(R.id.btn_edit_next);
-        tvTip = findViewById(R.id.tv_tip);
         sbUnlock = findViewById(R.id.sb_unlock);
         btnLock = findViewById(R.id.btn_lock);
         btnPermission = findViewById(R.id.btn_permission);
@@ -149,9 +146,6 @@ public class MainActivity
         submitCode = sp.getInt(KEY_SUBMIT_CODE, submitCode);
         prevCode = sp.getInt(KEY_PREV_CODE, prevCode);
         nextCode = sp.getInt(KEY_NEXT_CODE, nextCode);
-
-        boolean showTip = sp.getBoolean(KEY_SHOW_TIP, true);
-        tvTip.setVisibility(showTip ? View.VISIBLE : View.GONE);
 
         btnZeroEdit.setOnCheckedChangeListener(this);
         btnOneEdit.setOnCheckedChangeListener(this);
@@ -514,9 +508,6 @@ public class MainActivity
         sbUnlock.setEnabled(lock);
         if (lock) {
             sbUnlock.setProgress(0);
-        } else if (tvTip.getVisibility() == View.VISIBLE) {
-            sp.edit().putBoolean(KEY_SHOW_TIP, false).apply();
-            tvTip.setVisibility(View.GONE);
         }
     }
 
