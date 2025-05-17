@@ -72,6 +72,7 @@ public class MainActivity
     private ToggleButton btnSubmitEdit;
     private ToggleButton btnPrevEdit;
     private ToggleButton btnNextEdit;
+    private TextView tvTip;
     private SeekBar sbUnlock;
     private Button btnLock;
     private Button btnPermission;
@@ -129,6 +130,7 @@ public class MainActivity
         btnSubmitEdit = findViewById(R.id.btn_edit_submit);
         btnPrevEdit = findViewById(R.id.btn_edit_prev);
         btnNextEdit = findViewById(R.id.btn_edit_next);
+        tvTip = findViewById(R.id.tv_tip);
         sbUnlock = findViewById(R.id.sb_unlock);
         btnLock = findViewById(R.id.btn_lock);
         btnPermission = findViewById(R.id.btn_permission);
@@ -227,12 +229,14 @@ public class MainActivity
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         seekAllowed = false;
+        tvTip.setVisibility(View.GONE);
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         if (seekBar.isEnabled()) {
             seekBar.setProgress(0);
+            tvTip.setVisibility(View.VISIBLE);
         }
     }
 
@@ -506,9 +510,8 @@ public class MainActivity
         btnLock.setEnabled(!lock);
 
         sbUnlock.setEnabled(lock);
-        if (lock) {
-            sbUnlock.setProgress(0);
-        }
+        sbUnlock.setProgress(lock ? 0 : sbUnlock.getMax());
+        tvTip.setVisibility(lock ? View.VISIBLE : View.GONE);
     }
 
     private boolean havePermission() {
